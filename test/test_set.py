@@ -1511,6 +1511,8 @@ class _TestOnlySetsInBinaryOps:
         except TypeError:
             pass
         else:
+            if self.otherIsIterable and WORK_WITH_ITERABLES:
+                return
             self.fail("expected TypeError")
 
     def test_update(self):
@@ -1520,8 +1522,12 @@ class _TestOnlySetsInBinaryOps:
             self.assertRaises(TypeError, self.set.update, self.other)
 
     def test_union(self):
-        self.assertRaises(TypeError, lambda: self.set | self.other)
-        self.assertRaises(TypeError, lambda: self.other | self.set)
+        if self.otherIsIterable and WORK_WITH_ITERABLES:
+            self.set | self.other
+            self.other | self.set
+        else:
+            self.assertRaises(TypeError, lambda: self.set | self.other)
+            self.assertRaises(TypeError, lambda: self.other | self.set)
         if self.otherIsIterable:
             self.set.union(self.other)
         else:
@@ -1533,6 +1539,8 @@ class _TestOnlySetsInBinaryOps:
         except TypeError:
             pass
         else:
+            if self.otherIsIterable and WORK_WITH_ITERABLES:
+                return
             self.fail("expected TypeError")
 
     def test_intersection_update(self):
@@ -1542,8 +1550,12 @@ class _TestOnlySetsInBinaryOps:
             self.assertRaises(TypeError, self.set.intersection_update, self.other)
 
     def test_intersection(self):
-        self.assertRaises(TypeError, lambda: self.set & self.other)
-        self.assertRaises(TypeError, lambda: self.other & self.set)
+        if self.otherIsIterable and WORK_WITH_ITERABLES:
+            self.set & self.other
+            self.other & self.set
+        else:
+            self.assertRaises(TypeError, lambda: self.set & self.other)
+            self.assertRaises(TypeError, lambda: self.other & self.set)
         if self.otherIsIterable:
             self.set.intersection(self.other)
         else:
@@ -1555,6 +1567,8 @@ class _TestOnlySetsInBinaryOps:
         except TypeError:
             pass
         else:
+            if self.otherIsIterable and WORK_WITH_ITERABLES:
+                return
             self.fail("expected TypeError")
 
     def test_sym_difference_update(self):
@@ -1566,8 +1580,12 @@ class _TestOnlySetsInBinaryOps:
             )
 
     def test_sym_difference(self):
-        self.assertRaises(TypeError, lambda: self.set ^ self.other)
-        self.assertRaises(TypeError, lambda: self.other ^ self.set)
+        if self.otherIsIterable and WORK_WITH_ITERABLES:
+            self.set ^ self.other
+            self.other ^ self.set
+        else:
+            self.assertRaises(TypeError, lambda: self.set ^ self.other)
+            self.assertRaises(TypeError, lambda: self.other ^ self.set)
         if self.otherIsIterable:
             self.set.symmetric_difference(self.other)
         else:
@@ -1579,6 +1597,8 @@ class _TestOnlySetsInBinaryOps:
         except TypeError:
             pass
         else:
+            if self.otherIsIterable and WORK_WITH_ITERABLES:
+                return
             self.fail("expected TypeError")
 
     def test_difference_update(self):
@@ -1588,8 +1608,12 @@ class _TestOnlySetsInBinaryOps:
             self.assertRaises(TypeError, self.set.difference_update, self.other)
 
     def test_difference(self):
-        self.assertRaises(TypeError, lambda: self.set - self.other)
-        self.assertRaises(TypeError, lambda: self.other - self.set)
+        if self.otherIsIterable and WORK_WITH_ITERABLES:
+            self.set - self.other
+            self.other - self.set
+        else:
+            self.assertRaises(TypeError, lambda: self.set - self.other)
+            self.assertRaises(TypeError, lambda: self.other - self.set)
         if self.otherIsIterable:
             self.set.difference(self.other)
         else:
