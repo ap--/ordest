@@ -116,7 +116,11 @@ class OrderedSet(_MutableSet):
         for other in others:
             _MutableSet.__isub__(self, other)
 
-    symmetric_difference = _MutableSet.__xor__
+    def symmetric_difference(self, other):
+        oset = _MutableSet.__xor__(self, other)
+        if oset is NotImplemented:
+            raise TypeError(f"{type(self)}.symmetric_difference cannot use type {type(other)}")
+        return oset
 
     def symmetric_difference_update(self, other):
         _MutableSet.__ixor__(self, other)
