@@ -15,6 +15,8 @@ from ordest import OrderedSet
 # hackedy hack :)
 set = OrderedSet
 
+WORK_WITH_ITERABLES = True
+
 
 class PassThru(Exception):
     pass
@@ -112,7 +114,8 @@ class _TestJointOps:
         except TypeError:
             pass
         else:
-            self.fail("s|t did not screen-out general iterables")
+            if not WORK_WITH_ITERABLES:
+                self.fail("s|t did not screen-out general iterables")
 
     def test_intersection(self):
         i = self.s.intersection(self.otherword)
@@ -171,7 +174,8 @@ class _TestJointOps:
         except TypeError:
             pass
         else:
-            self.fail("s&t did not screen-out general iterables")
+            if not WORK_WITH_ITERABLES:
+                self.fail("s&t did not screen-out general iterables")
 
     def test_difference(self):
         i = self.s.difference(self.otherword)
@@ -198,7 +202,8 @@ class _TestJointOps:
         except TypeError:
             pass
         else:
-            self.fail("s-t did not screen-out general iterables")
+            if not WORK_WITH_ITERABLES:
+                self.fail("s-t did not screen-out general iterables")
 
     def test_symmetric_difference(self):
         i = self.s.symmetric_difference(self.otherword)
@@ -231,7 +236,8 @@ class _TestJointOps:
         except TypeError:
             pass
         else:
-            self.fail("s^t did not screen-out general iterables")
+            if not WORK_WITH_ITERABLES:
+                self.fail("s^t did not screen-out general iterables")
 
     def test_equality(self):
         self.assertEqual(self.s, set(self.word))
