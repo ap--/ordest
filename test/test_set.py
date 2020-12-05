@@ -386,13 +386,13 @@ class _TestJointOps:
         self.assertEqual(sum(elem.hash_count for elem in d), n)
 
         if RELAX_KEY_REHASHING_REQUIREMENTS:
-            n += 2*inc  # iters twice!
+            n += inc  # iters once...
         s.difference(d)
         self.assertEqual(sum(elem.hash_count for elem in d), n)
 
         if hasattr(s, "symmetric_difference_update"):
             if RELAX_KEY_REHASHING_REQUIREMENTS:
-                n += 2 * inc  # iters twice too!
+                n += 2 * inc  # iters twice...
             s.symmetric_difference_update(d)
         self.assertEqual(sum(elem.hash_count for elem in d), n)
 

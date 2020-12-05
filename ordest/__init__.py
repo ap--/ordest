@@ -84,10 +84,10 @@ class OrderedSet(_MutableSet):
     # -- set methods --------------------------------------------------
 
     def copy(self):
-        return self.__class__(self)
+        return self.__class__(self.__map)
 
     def union(self, *others):
-        oset = self.__class__(self)
+        oset = self.copy()
         for other in others:
             oset.__ior__(other)
         return oset
@@ -97,7 +97,7 @@ class OrderedSet(_MutableSet):
             self.__ior__(other)
 
     def intersection(self, *others):
-        oset = self.__class__(self)
+        oset = self.copy()
         for other in others:
             oset.__iand__(other)
         return oset
@@ -107,7 +107,7 @@ class OrderedSet(_MutableSet):
             _MutableSet.__iand__(self, other)
 
     def difference(self, *others):
-        oset = self.__class__(self)
+        oset = self.copy()
         for other in others:
             oset.__isub__(other)
         return oset
