@@ -10,6 +10,12 @@ import weakref
 from random import randrange, shuffle
 
 
+from ordest import OrderedSet
+
+# hackedy hack :)
+set = OrderedSet
+
+
 class PassThru(Exception):
     pass
 
