@@ -15,10 +15,12 @@ from ordest import OrderedSet
 # hackedy hack :)
 set = OrderedSet
 
-WORK_WITH_ITERABLES = True
-REQUIRE_IMMUTABLITY_CAST_IN_CONTAINS = False
-RELAX_KEY_REHASHING_REQUIREMENTS = True
-REQUIRE_SUPPORT_FOR_LEGACY_GETITEM_ITERATOR = False
+
+# requirements of __builtin__['set']
+REQUIRE_STRICT_HASH_REUSE = False
+REQUIRE_ITERABLE_SCREEN_OUT = False
+REQUIRE_IMMUTABILITY_CAST_IN_CONTAINS = False
+REQUIRE_LEGACY_GETITEM_ITERATOR_SUPPORT = False
 
 
 class PassThru(Exception):
@@ -84,7 +86,7 @@ class _TestJointOps:
         for c in self.letters:
             self.assertEqual(c in self.s, c in self.d)
         self.assertRaises(TypeError, self.s.__contains__, [[]])
-        if REQUIRE_IMMUTABLITY_CAST_IN_CONTAINS:
+        if REQUIRE_IMMUTABILITY_CAST_IN_CONTAINS:
             s = self.thetype([frozenset(self.letters)])
             self.assertIn(self.thetype(self.letters), s)
 
@@ -118,7 +120,7 @@ class _TestJointOps:
         except TypeError:
             pass
         else:
-            if not WORK_WITH_ITERABLES:
+            if REQUIRE_ITERABLE_SCREEN_OUT:
                 self.fail("s|t did not screen-out general iterables")
 
     def test_intersection(self):
@@ -178,7 +180,7 @@ class _TestJointOps:
         except TypeError:
             pass
         else:
-            if not WORK_WITH_ITERABLES:
+            if REQUIRE_ITERABLE_SCREEN_OUT:
                 self.fail("s&t did not screen-out general iterables")
 
     def test_difference(self):
@@ -206,7 +208,7 @@ class _TestJointOps:
         except TypeError:
             pass
         else:
-            if not WORK_WITH_ITERABLES:
+            if REQUIRE_ITERABLE_SCREEN_OUT:
                 self.fail("s-t did not screen-out general iterables")
 
     def test_symmetric_difference(self):
@@ -240,7 +242,7 @@ class _TestJointOps:
         except TypeError:
             pass
         else:
-            if not WORK_WITH_ITERABLES:
+            if REQUIRE_ITERABLE_SCREEN_OUT:
                 self.fail("s^t did not screen-out general iterables")
 
     def test_equality(self):
@@ -380,18 +382,18 @@ class _TestJointOps:
         s = self.thetype(d)
         self.assertEqual(sum(elem.hash_count for elem in d), n)
 
-        if RELAX_KEY_REHASHING_REQUIREMENTS:
+        if not REQUIRE_STRICT_HASH_REUSE:
             n += inc  # set is free, but fromkeys iterates
         d2 = dict.fromkeys(set(d))
         self.assertEqual(sum(elem.hash_count for elem in d), n)
 
-        if RELAX_KEY_REHASHING_REQUIREMENTS:
+        if not REQUIRE_STRICT_HASH_REUSE:
             n += inc  # iters once...
         s.difference(d)
         self.assertEqual(sum(elem.hash_count for elem in d), n)
 
         if hasattr(s, "symmetric_difference_update"):
-            if RELAX_KEY_REHASHING_REQUIREMENTS:
+            if not REQUIRE_STRICT_HASH_REUSE:
                 n += 2 * inc  # iters twice...
             s.symmetric_difference_update(d)
         self.assertEqual(sum(elem.hash_count for elem in d), n)
@@ -489,7 +491,7 @@ class TestSet(_TestJointOps, unittest.TestCase):
         self.assertNotIn("a", self.s)
         self.assertRaises(KeyError, self.s.remove, "Q")
         self.assertRaises(TypeError, self.s.remove, [])
-        if REQUIRE_IMMUTABLITY_CAST_IN_CONTAINS:
+        if REQUIRE_IMMUTABILITY_CAST_IN_CONTAINS:
             s = self.thetype([frozenset(self.word)])
             self.assertIn(self.thetype(self.word), s)
             s.remove(self.thetype(self.word))
@@ -517,7 +519,7 @@ class TestSet(_TestJointOps, unittest.TestCase):
                 "KeyError should be {0}, not {1}".format(key, e.args[0]),
             )
         except TypeError:
-            if REQUIRE_IMMUTABLITY_CAST_IN_CONTAINS:
+            if REQUIRE_IMMUTABILITY_CAST_IN_CONTAINS:
                 raise
         else:
             self.fail()
@@ -527,7 +529,7 @@ class TestSet(_TestJointOps, unittest.TestCase):
         self.assertNotIn("a", self.s)
         self.s.discard("Q")
         self.assertRaises(TypeError, self.s.discard, [])
-        if REQUIRE_IMMUTABLITY_CAST_IN_CONTAINS:
+        if REQUIRE_IMMUTABILITY_CAST_IN_CONTAINS:
             s = self.thetype([frozenset(self.word)])
             self.assertIn(self.thetype(self.word), s)
             s.discard(self.thetype(self.word))
@@ -1512,7 +1514,7 @@ class _TestOnlySetsInBinaryOps:
         except TypeError:
             pass
         else:
-            if self.otherIsIterable and WORK_WITH_ITERABLES:
+            if self.otherIsIterable and not REQUIRE_ITERABLE_SCREEN_OUT:
                 return
             self.fail("expected TypeError")
 
@@ -1523,7 +1525,7 @@ class _TestOnlySetsInBinaryOps:
             self.assertRaises(TypeError, self.set.update, self.other)
 
     def test_union(self):
-        if self.otherIsIterable and WORK_WITH_ITERABLES:
+        if self.otherIsIterable and not REQUIRE_ITERABLE_SCREEN_OUT:
             self.set | self.other
             self.other | self.set
         else:
@@ -1540,7 +1542,7 @@ class _TestOnlySetsInBinaryOps:
         except TypeError:
             pass
         else:
-            if self.otherIsIterable and WORK_WITH_ITERABLES:
+            if self.otherIsIterable and not REQUIRE_ITERABLE_SCREEN_OUT:
                 return
             self.fail("expected TypeError")
 
@@ -1551,7 +1553,7 @@ class _TestOnlySetsInBinaryOps:
             self.assertRaises(TypeError, self.set.intersection_update, self.other)
 
     def test_intersection(self):
-        if self.otherIsIterable and WORK_WITH_ITERABLES:
+        if self.otherIsIterable and not REQUIRE_ITERABLE_SCREEN_OUT:
             self.set & self.other
             self.other & self.set
         else:
@@ -1568,7 +1570,7 @@ class _TestOnlySetsInBinaryOps:
         except TypeError:
             pass
         else:
-            if self.otherIsIterable and WORK_WITH_ITERABLES:
+            if self.otherIsIterable and not REQUIRE_ITERABLE_SCREEN_OUT:
                 return
             self.fail("expected TypeError")
 
@@ -1581,7 +1583,7 @@ class _TestOnlySetsInBinaryOps:
             )
 
     def test_sym_difference(self):
-        if self.otherIsIterable and WORK_WITH_ITERABLES:
+        if self.otherIsIterable and not REQUIRE_ITERABLE_SCREEN_OUT:
             self.set ^ self.other
             self.other ^ self.set
         else:
@@ -1598,7 +1600,7 @@ class _TestOnlySetsInBinaryOps:
         except TypeError:
             pass
         else:
-            if self.otherIsIterable and WORK_WITH_ITERABLES:
+            if self.otherIsIterable and not REQUIRE_ITERABLE_SCREEN_OUT:
                 return
             self.fail("expected TypeError")
 
@@ -1609,7 +1611,7 @@ class _TestOnlySetsInBinaryOps:
             self.assertRaises(TypeError, self.set.difference_update, self.other)
 
     def test_difference(self):
-        if self.otherIsIterable and WORK_WITH_ITERABLES:
+        if self.otherIsIterable and not REQUIRE_ITERABLE_SCREEN_OUT:
             self.set - self.other
             self.other - self.set
         else:
@@ -1932,7 +1934,7 @@ class TestVariousIteratorArgs(unittest.TestCase):
                 s.isdisjoint,
             ):
                 for g in (G, I, Ig, L, R):
-                    if not REQUIRE_SUPPORT_FOR_LEGACY_GETITEM_ITERATOR:
+                    if not REQUIRE_LEGACY_GETITEM_ITERATOR_SUPPORT:
                         if g is G:
                             continue
                     expected = meth(data)
@@ -1963,7 +1965,7 @@ class TestVariousIteratorArgs(unittest.TestCase):
                 "symmetric_difference_update",
             ):
                 for g in (G, I, Ig, S, L, R):
-                    if not REQUIRE_SUPPORT_FOR_LEGACY_GETITEM_ITERATOR:
+                    if not REQUIRE_LEGACY_GETITEM_ITERATOR_SUPPORT:
                         if g is G:
                             continue
                     s = set("january")
