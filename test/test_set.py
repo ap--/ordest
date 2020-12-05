@@ -752,6 +752,7 @@ class TestSetSubclassWithKeywordArgs(TestSet):
 class TestFrozenSet(_TestJointOps, unittest.TestCase):
     thetype = frozenset
     basetype = frozenset
+    __test__ = False
 
     def test_init(self):
         s = self.thetype(self.word)
@@ -829,6 +830,7 @@ class FrozenSetSubclass(frozenset):
 class TestFrozenSetSubclass(TestFrozenSet):
     thetype = FrozenSetSubclass
     basetype = frozenset
+    __test__ = False
 
     def test_constructor_identity(self):
         s = self.thetype(range(3))
