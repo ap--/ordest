@@ -16,6 +16,7 @@ from ordest import OrderedSet
 set = OrderedSet
 
 WORK_WITH_ITERABLES = True
+REQUIRE_IMMUTABLITY_CAST_IN_CONTAINS = False
 
 
 class PassThru(Exception):
@@ -81,8 +82,9 @@ class _TestJointOps:
         for c in self.letters:
             self.assertEqual(c in self.s, c in self.d)
         self.assertRaises(TypeError, self.s.__contains__, [[]])
-        s = self.thetype([frozenset(self.letters)])
-        self.assertIn(self.thetype(self.letters), s)
+        if REQUIRE_IMMUTABLITY_CAST_IN_CONTAINS:
+            s = self.thetype([frozenset(self.letters)])
+            self.assertIn(self.thetype(self.letters), s)
 
     def test_union(self):
         u = self.s.union(self.otherword)
@@ -472,11 +474,12 @@ class TestSet(_TestJointOps, unittest.TestCase):
         self.assertNotIn("a", self.s)
         self.assertRaises(KeyError, self.s.remove, "Q")
         self.assertRaises(TypeError, self.s.remove, [])
-        s = self.thetype([frozenset(self.word)])
-        self.assertIn(self.thetype(self.word), s)
-        s.remove(self.thetype(self.word))
-        self.assertNotIn(self.thetype(self.word), s)
-        self.assertRaises(KeyError, self.s.remove, self.thetype(self.word))
+        if REQUIRE_IMMUTABLITY_CAST_IN_CONTAINS:
+            s = self.thetype([frozenset(self.word)])
+            self.assertIn(self.thetype(self.word), s)
+            s.remove(self.thetype(self.word))
+            self.assertNotIn(self.thetype(self.word), s)
+            self.assertRaises(KeyError, self.s.remove, self.thetype(self.word))
 
     def test_remove_keyerror_unpacking(self):
         # bug:  www.python.org/sf/1576657
@@ -498,6 +501,9 @@ class TestSet(_TestJointOps, unittest.TestCase):
                 e.args[0] is key,
                 "KeyError should be {0}, not {1}".format(key, e.args[0]),
             )
+        except TypeError:
+            if REQUIRE_IMMUTABLITY_CAST_IN_CONTAINS:
+                raise
         else:
             self.fail()
 
@@ -506,11 +512,12 @@ class TestSet(_TestJointOps, unittest.TestCase):
         self.assertNotIn("a", self.s)
         self.s.discard("Q")
         self.assertRaises(TypeError, self.s.discard, [])
-        s = self.thetype([frozenset(self.word)])
-        self.assertIn(self.thetype(self.word), s)
-        s.discard(self.thetype(self.word))
-        self.assertNotIn(self.thetype(self.word), s)
-        s.discard(self.thetype(self.word))
+        if REQUIRE_IMMUTABLITY_CAST_IN_CONTAINS:
+            s = self.thetype([frozenset(self.word)])
+            self.assertIn(self.thetype(self.word), s)
+            s.discard(self.thetype(self.word))
+            self.assertNotIn(self.thetype(self.word), s)
+            s.discard(self.thetype(self.word))
 
     def test_pop(self):
         for i in range(len(self.s)):
