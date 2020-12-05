@@ -1,6 +1,6 @@
 import unittest
-from test import support
-from test.support import warnings_helper
+# from test import support
+# from test.support import warnings_helper
 import gc
 import weakref
 import operator
@@ -349,8 +349,8 @@ class TestJointOps:
         gc.collect()
         self.assertTrue(ref() is None, "Cycle was not collected")
 
-    def test_free_after_iterating(self):
-        support.check_free_after_iterating(self, iter, self.thetype)
+    # def test_free_after_iterating(self):
+    #    support.check_free_after_iterating(self, iter, self.thetype)
 
 class TestSet(TestJointOps, unittest.TestCase):
     thetype = set
@@ -631,10 +631,10 @@ class TestSet(TestJointOps, unittest.TestCase):
         myset >= myobj
         self.assertTrue(myobj.le_called)
 
-    @unittest.skipUnless(hasattr(set, "test_c_api"),
-                         'C API test only available in a debug build')
-    def test_c_api(self):
-        self.assertEqual(set().test_c_api(), True)
+    # @unittest.skipUnless(hasattr(set, "test_c_api"),
+    #                      'C API test only available in a debug build')
+    # def test_c_api(self):
+    #     self.assertEqual(set().test_c_api(), True)
 
 class SetSubclass(set):
     pass
@@ -952,22 +952,22 @@ class TestBasicOpsBytes(TestBasicOps, unittest.TestCase):
 
 #------------------------------------------------------------------------------
 
-class TestBasicOpsMixedStringBytes(TestBasicOps, unittest.TestCase):
-    def setUp(self):
-        self._warning_filters = warnings_helper.check_warnings()
-        self._warning_filters.__enter__()
-        warnings.simplefilter('ignore', BytesWarning)
-        self.case   = "string and bytes set"
-        self.values = ["a", "b", b"a", b"b"]
-        self.set    = set(self.values)
-        self.dup    = set(self.values)
-        self.length = 4
-
-    def tearDown(self):
-        self._warning_filters.__exit__(None, None, None)
-
-    def test_repr(self):
-        self.check_repr_against_values()
+# class TestBasicOpsMixedStringBytes(TestBasicOps, unittest.TestCase):
+#     def setUp(self):
+#         self._warning_filters = warnings_helper.check_warnings()
+#         self._warning_filters.__enter__()
+#         warnings.simplefilter('ignore', BytesWarning)
+#         self.case   = "string and bytes set"
+#         self.values = ["a", "b", b"a", b"b"]
+#         self.set    = set(self.values)
+#         self.dup    = set(self.values)
+#         self.length = 4
+#
+#     def tearDown(self):
+#         self._warning_filters.__exit__(None, None, None)
+#
+#     def test_repr(self):
+#         self.check_repr_against_values()
 
 #==============================================================================
 
