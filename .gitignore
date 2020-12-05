@@ -1,0 +1,13 @@
+# build folders
+build/
+dist/
+
+# python specific
+*.egg-info
+__pycache__
+
+# test specific
+.pytest_cache
+
+# module specific
+ordest/_version.py
