@@ -365,7 +365,7 @@ class _TestJointOps:
         w.value = s
         if self.thetype.__name__ == "set":
             self.assertEqual(repr(s), "{set(...)}")
-        elif self.thetype.__name__ == "OrderedSet":
+        elif self.thetype.__name__ == self.basetype.__name__:
             name = repr(s).partition("(")[0]  # strip class name
             self.assertEqual(repr(s), "%s([...])" % (name))
         else:
@@ -735,7 +735,7 @@ class SetSubclass(set):
 
 class TestSetSubclass(TestSet):
     thetype = SetSubclass
-    basetype = set
+    basetype = SetSubclass
 
 
 class SetSubclassWithKeywordArgs(set):
@@ -883,10 +883,14 @@ class _TestBasicOps:
 
     def check_repr_against_values(self):
         text = repr(self.set)
-        self.assertTrue(text.startswith("{"))
-        self.assertTrue(text.endswith("}"))
 
-        result = text[1:-1].split(", ")
+        start = "%s([" % set.__name__
+        stop = "])"
+
+        self.assertTrue(text.startswith(start))
+        self.assertTrue(text.endswith(stop))
+
+        result = text[len(start):-len(stop)].split(", ")
         result.sort()
         sorted_repr_values = [repr(value) for value in self.values]
         sorted_repr_values.sort()
@@ -989,7 +993,7 @@ class TestBasicOpsEmpty(_TestBasicOps, unittest.TestCase):
         self.set = set(self.values)
         self.dup = set(self.values)
         self.length = 0
-        self.repr = "set()"
+        self.repr = "%s([])" % set.__name__
 
 
 # ------------------------------------------------------------------------------
@@ -1002,7 +1006,7 @@ class TestBasicOpsSingleton(_TestBasicOps, unittest.TestCase):
         self.set = set(self.values)
         self.dup = set(self.values)
         self.length = 1
-        self.repr = "{3}"
+        self.repr = "%s([3])" % set.__name__
 
     def test_in(self):
         self.assertIn(3, self.set)
@@ -1021,7 +1025,7 @@ class TestBasicOpsTuple(_TestBasicOps, unittest.TestCase):
         self.set = set(self.values)
         self.dup = set(self.values)
         self.length = 1
-        self.repr = "{(0, 'zero')}"
+        self.repr = "%s([(0, 'zero')])" % set.__name__
 
     def test_in(self):
         self.assertIn((0, "zero"), self.set)
