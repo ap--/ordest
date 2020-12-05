@@ -18,6 +18,7 @@ set = OrderedSet
 WORK_WITH_ITERABLES = True
 REQUIRE_IMMUTABLITY_CAST_IN_CONTAINS = False
 RELAX_KEY_REHASHING_REQUIREMENTS = True
+REQUIRE_SUPPORT_FOR_LEGACY_GETITEM_ITERATOR = False
 
 
 class PassThru(Exception):
@@ -1931,6 +1932,9 @@ class TestVariousIteratorArgs(unittest.TestCase):
                 s.isdisjoint,
             ):
                 for g in (G, I, Ig, L, R):
+                    if not REQUIRE_SUPPORT_FOR_LEGACY_GETITEM_ITERATOR:
+                        if g is G:
+                            continue
                     expected = meth(data)
                     actual = meth(g(data))
                     if isinstance(expected, bool):
@@ -1959,6 +1963,9 @@ class TestVariousIteratorArgs(unittest.TestCase):
                 "symmetric_difference_update",
             ):
                 for g in (G, I, Ig, S, L, R):
+                    if not REQUIRE_SUPPORT_FOR_LEGACY_GETITEM_ITERATOR:
+                        if g is G:
+                            continue
                     s = set("january")
                     t = s.copy()
                     getattr(s, methname)(list(g(data)))
