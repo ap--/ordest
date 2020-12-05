@@ -360,8 +360,11 @@ class _TestJointOps:
         w = ReprWrapper()
         s = self.thetype([w])
         w.value = s
-        if self.thetype == set:
+        if self.thetype.__name__ == "set":
             self.assertEqual(repr(s), "{set(...)}")
+        elif self.thetype.__name__ == "OrderedSet":
+            name = repr(s).partition("(")[0]  # strip class name
+            self.assertEqual(repr(s), "%s([...])" % (name))
         else:
             name = repr(s).partition("(")[0]  # strip class name
             self.assertEqual(repr(s), "%s({%s(...)})" % (name, name))
