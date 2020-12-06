@@ -88,8 +88,7 @@ class OrderedSet(_MutableSet):
 
     def union(self, *others):
         oset = self.copy()
-        for other in others:
-            oset.__ior__(other)
+        oset.update(*others)
         return oset
 
     def update(self, *others):
@@ -98,43 +97,41 @@ class OrderedSet(_MutableSet):
 
     def intersection(self, *others):
         oset = self.copy()
-        for other in others:
-            oset.__iand__(other)
+        oset.intersection_update(*others)
         return oset
 
     def intersection_update(self, *others):
         for other in others:
-            _MutableSet.__iand__(self, other)
+            self.__iand__(other)
 
     def difference(self, *others):
         oset = self.copy()
-        for other in others:
-            oset.__isub__(other)
+        oset.difference_update(*others)
         return oset
 
     def difference_update(self, *others):
         for other in others:
-            _MutableSet.__isub__(self, other)
+            self.__isub__(other)
 
     def symmetric_difference(self, other):
-        oset = _MutableSet.__xor__(self, other)
+        oset = self.__xor__(other)
         if oset is NotImplemented:
             raise TypeError(f"{type(self)}.symmetric_difference cannot use type {type(other)}")
         return oset
 
     def symmetric_difference_update(self, other):
-        _MutableSet.__ixor__(self, other)
+        self.__ixor__(other)
 
     def issubset(self, other):
         if not isinstance(other, _MutableSet):
             if not isinstance(other, _Iterable):
                 return NotImplemented
-            other = self._from_iterable(other)
-        return _MutableSet.__le__(self, other)
+            other = self.__class__(other)
+        return self <= other
 
     def issuperset(self, other):
         if not isinstance(other, _MutableSet):
             if not isinstance(other, _Iterable):
                 return NotImplemented
-            other = self._from_iterable(other)
-        return _MutableSet.__ge__(self, other)
+            other = self.__class__(other)
+        return self >= other
