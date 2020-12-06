@@ -14,6 +14,7 @@ from ordest import OrderedSet
 
 # hackedy hack :)
 set = OrderedSet
+# frozenset = FrozenOrderedSet  # todo
 
 
 # requirements of __builtin__['set']

@@ -1,4 +1,4 @@
-"""This module implements an insertion order preserving set container, OrderedSet.
+"""This module implements an insertion order preserving set container.
 
 * OrderedSet   mutable set container that preserves insertion order
 
